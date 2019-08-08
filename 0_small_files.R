@@ -18,10 +18,21 @@ build_params <- read_csv(file.path("list_pct_region.csv"))
 regions_tobuild <- as.character(build_params$region_name[build_params$to_rebuild==1])
 
 for(k in 1:length(regions_tobuild)){
-
+  
   # SUBSET TO THE SELECTED REGION
   region <- regions_tobuild[k]
   
+  if(!dir.exists(file.path(purpose, geography, region))) { dir.create(file.path(purpose, geography, region)) }
+
+  z <- readRDS(file.path(paste0("../pct-outputs-regional-R/", purpose, "/", geography, "/",  region, "/z.RDS")))
+  saveRDS(z, (file.path(paste0(purpose, "/", geography, "/",  region, "/z.RDS"))))
+  
+  c <- readRDS(file.path(paste0("../pct-outputs-regional-R/", purpose, "/", geography, "/",  region, "/c.RDS")))
+  saveRDS(c, (file.path(paste0(purpose, "/", geography, "/",  region, "/c.RDS"))))
+
+  rnet <- readRDS(file.path(paste0("../pct-outputs-regional-R/", purpose, "/", geography, "/",  region, "/rnet.RDS")))
+  saveRDS(rnet, (file.path(paste0(purpose, "/", geography, "/",  region, "/rnet.RDS"))))
+
   rf <- readRDS(file.path(paste0("../pct-outputs-regional-R/", purpose, "/", geography, "/",  region, "/rf.RDS")))
   rf <- rf[rf@data$rf_dist_km<=10,]
   saveRDS(rf, (file.path(paste0(purpose, "/", geography, "/",  region, "/rf.RDS"))))
@@ -34,7 +45,5 @@ for(k in 1:length(regions_tobuild)){
   l <- l[l@data$rf_dist_km<=10,]
   saveRDS(l, (file.path(paste0(purpose, "/", geography, "/",  region, "/l.RDS"))))
 
- #file.remove(paste0(purpose, "/", geography, "/",  region, "/rnet_full.RDS"))
-
-    message(paste0("Finished ", region," at ",Sys.time()))
+  message(paste0("Finished ", region," at ",Sys.time()))
 }
